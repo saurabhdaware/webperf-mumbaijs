@@ -1,5 +1,5 @@
 Hey everyone!
-| So Web Performane Hacks!
+| So Web Performance Hacks!
 | Reading the title it may seem like I'm going to talk about how to improve website's performance
 | Well.. I'm going to disappoint you all, The talk is more about how to fake a fast website
 | So I'll tell you some hacks which will make your website appear as if it is loading fast but actually it won't really load fast. Infact we will delay things
@@ -51,38 +51,38 @@ Hey everyone!
 | so the HTML would be on top and then head as its child
 | so we first get something called a parse tree and then eventually get a DOM tree
 | DOM tree is what we access when we use selector commands in JavaScript
-| CSS also goes through a very similar process where we have CSS text and eventually tokeninzation of CSS happens
+| CSS also goes through a very similar process where we have CSS text and eventually tokenization of CSS happens
 | and CSS forms something called C S S O M, which is CSS Object Model $wait2s
 
 || This is what a CSSOM tree looks like, $wait5s
 | so we have body and it's styles, then a div and its styles
 
 || $wait5s
-| Now we got CSSOM Tree and DOM Tree, These trees are merged to form render tree
-| Render tree has all the information about the styles and dom
+| Now we got CSSOM Tree and DOM Tree, These trees are merged to form a render tree
+| Render tree has all the information about the styles and dom except the head, and the nodes with display:none
 | After render tree, layout happens, so it takes information about positions from render tree and lays out the elements
-| so if I have two divs with position relative, it will calculate and place the second div in its correct position
+| so if I have two divs with position relative, it will calculate and place the second div in its correct position on screen
 | then a paint happens where the elements get colors, background-colors and shadows.
 
-|| This is an important point $wait5s
+|| This is an important point $wait2s
 | so parsing halts when it comes across link, style and script tags.
 | Which means... if I have link rel=stylesheet in head, the parser is going to stop there, fetch the css, wait for response and then continue.
-| Same if JavaScript, it will fetch the javascript, execute it and then it will continue.
+| Same with JavaScript, it will fetch the javascript, execute it and then it will continue.
 
-|| Now, from the point a user hits enter on typing URL, to the formation of render tree and then layout happening and then paint and eventually getting first paint
+|| Now, from the point a user types URL and hits enter to the formation of render tree and then layout and then paint and eventually getting first paint
 | This is what our users see
 | a blank white page
 | White pages are a bad user experience
 | they don't tell anything
 | is my website loading? did it fail? my laptop crashed? are we in galactic simulation which just stopped working? nobody knows...
 | So... we have to do something to get the first paint as quick as possible
-| Also, anything is better than white page.. blue screen, pink screen, anything!
+| Also, anything is better than white page.. anything! a blue screen or a pink screen or a yellow screen or, anything!
 
 || So we have three challenges to solve,
 | Let's see how we can defer CSS first
 
 || We'll do something called a 'Quick First Paint' hack
-| by the way, I named them so there isn't anything of this name
+| by the way, I named them so there isn't anything called a 'Quick First Paint' Hack 
 
 || Let's do some live coding!
 
@@ -90,17 +90,18 @@ Hey everyone!
 | Chrome has a performance tab in the devtools so let's run a performance profiler
 
 || Now this is what we get $wait5s
-| on Slow 3G we're getting the first paint on 2seconds
-| Also, in performance tab, the purple bar is the layout bar and green bar is of paint, which we saw in the previous slides.
-| But, nobody writes websites without CSS
+| on Slow 3G we're getting the first paint in 2seconds
+| Also, in performance tab, the purple bar is the layout bar and green bar is of paint, which we saw in the diagram in previous slides.
+| But, nobody writes websites without CSS right?
 | So lets uncomment CSS file and see the performance again
 
-|| So I've uncommented CSS file in the code. $wait2s
+|| I've uncommented CSS file in the code. $wait2s
 
 || And here's the output
-| Now, the problem is, for 4 point 1 seconds, user is seeing white screen.
+| Now, the problem is, for 4 seconds, user is seeing white screen.
 
-|| and these are the performance results... $wait5s
+|| and these are the performance results... $wait5s 
+| The first paint happened after loading and parsing the CSS  
 
 || Now the problem is renderer waits for the CSS to load
 
@@ -119,23 +120,28 @@ Hey everyone!
 | At the start of the talk, I said we are not going to compromise with the UI
 | having a flash of CSS less HTML content seems like a unfair experience for the user
 
-|| Just showing HTML to the user is a bad user experience as well
+|| So just showing HTML to the user is a bad user experience as well
 
-|| So to solve this, we can do something called Inlining Critical CSS
+|| To solve this, we can do something called Inlining Critical CSS
 
-|| Now, Initially we only want styles header to load so I'll cut paste the styles of header from main.css to the index.html's style tag.  $wait5s
+|| Now, Initially we only want styles of header and navigation bar to load since that is the first thing users are going to see when they visit website
+| so I'll cut paste the styles of header from main.css to the index.html's style tag.  $wait5s
 
 || So now, we get styles of a header loaded straight from HTML and thus we don't wait for CSS to show initial styles
 | Since the user is not going to scroll as soon as he get's on website, we get time to load other styles
 | Styles for remaining page will be loaded from main.css file
 | In output, now we get our website's header in first 2 seconds. 
-| Yehhey! that's a win! you can celebrate here!
+| Yehhey! that's a win! you can celebrate here! 
+
+|| Depending on your website, you may have to handle first paint separately.
+| On my personal website, the header is heavy in itself, so loading the header was not an option for me
+| Instead of loading header's css I rather load a blank blue page so later go on adding the content as it loads.
 | So cool, we solved the CSS problem, now we have to fix JavaScript
 
 || As I said script, blocks the HTML parser
 | but there are ways to avoid this parse blocking scripts
 | We can use async and defer
-| Now you can see slides, this is script loads and executes with different attributes $wait5s
+| As you can see in slides, how script loads and executes with different attributes $wait10s
 | As you can see, the usual script tag pauses the HTML parsing, downloads the script, and executes the code
 | This is the reason why we put script at the end of the body, so that we won't block the rendering process.
 | async will download the script while parsing and will execute it whenever it can. So it will execute as soon as it is downloaded.
@@ -183,10 +189,11 @@ Hey everyone!
 | to get Progressive JPEG, if you're using photoshop, you can check the progressive checkbox while saving image.
 | Otherwiser there are online JPEG to Progressive JPEG convertors which you can use.
 | Progressive JPEGs have a disadvantage though, 
-| Even though visually to the user they seem like they are loading fast, they actually longer than normal JPEGs
+| Even though visually to the user they seem like they are loading fast, they actually take longer than normal JPEGs
 | In the worst case, they take 3 times longer to load than usual JPEGs
 
 || and finally we have CDNs, Content Delievery Networks
+
 || a lot of CDNs provide an API which lets you change the parameters of image from URL 
 | so you can dynamically set the width and only ask for image of the size that you need.
 | So if you have a header image which is needed to be 1000px wide in desktop, it is likely to take lesser width in mobiles.
@@ -196,4 +203,4 @@ Hey everyone!
 | VisConf lets you create talks from transcript and slides and generates an animated version of talk.
 | You can check it out on github. $wait5s
 
-|| and that is it! Thank you! If you have any questions you can drop on my twitter.
+|| and that is it! Thank you! If you have any questions, you can drop them on my twitter.
